@@ -7,13 +7,43 @@
 //
 
 import UIKit
+import CoreLocation
+import MapKit
 
-class MapViewController: UIViewController {
 
+class MapViewController: UIViewController, UITextFieldDelegate, MKMapViewDelegate {
+
+    let locationManager = CLLocationManager()
+    
+    let initialLocation = CLLocation(latitude: 37.3230, longitude: -122.0322)
+    
+    @IBOutlet var myMapView : MKMapView!
+    @IBOutlet var tbLocEntered : UITextField!
+    @IBOutlet var myTableView : UITableView!
+    
+    var routeSteps = ["Enter a destination to see the steps"]
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+          return textField.resignFirstResponder()
+      }
+
+    let regionRadius : CLLocationDistance = 1000
+    func centerMapOnLocation(location : CLLocation) {
+        let coordinateRegion = MKCoordinateRegion.init(center: location.coordinate,
+                                                  latitudinalMeters: regionRadius * 2.0, longitudinalMeters: regionRadius * 2.0)
+        myMapView.setRegion(coordinateRegion, animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        centerMapOnLocation(location: initialLocation)
+        let dropPin = MKPointAnnotation()
+        dropPin.coordinate = initialLocation.coordinate
+        dropPin.title = "Starting at Apple headquarter"
+        self.myMapView.addAnnotation(dropPin)
+        self.myMapView.selectAnnotation(dropPin, animated: true)
     }
     
 
